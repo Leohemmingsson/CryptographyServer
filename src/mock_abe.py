@@ -3,10 +3,10 @@ class rabe:
         self.type = type
 
     def secret(self):
-        return "secret"
+        return "THIS IS secret"
 
     def encrypt(self, data, attributes, secret_key):
-        return "Encrypted data"
+        return "VERY Encrypted data"
 
     def decrypt(self, encrypted_data, policy, secret_key):
-        return "Decrypted data"
+        return "EXTREMLY Decrypted data"
