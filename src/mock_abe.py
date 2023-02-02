@@ -5,8 +5,8 @@ class rabe:
     def setup(self):
         return ("Public key", "Master key")
 
-    def encrypt(self, content, policy, secret_key):
+    def encrypt(self, *args, **kwargs):
         return "VERY Encrypted data"
 
-    def decrypt(self, encrypted_data, policy, secret_key):
+    def decrypt(self, *args, **kwargs):
         return "EXTREMLY Decrypted data"

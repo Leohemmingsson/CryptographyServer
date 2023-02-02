@@ -8,21 +8,26 @@ class DB:
         """
         pass
 
-    def post(self, id: int, name: str, file: str):
+    def post(self, *args, **kwargs):
         """
         Stores file on specified id.
         """
         pass
 
-    def create_file(self, id: int):
+    def create_file(self, *args, **kwargs):
         """
         Creates a content instance, with no content.
         """
         pass
 
-    def delete_file(self, id: int):
+    def delete_file(self, *args, **kwargs):
         """
         Deletes the content instance, with specified id.
+        """
+        pass
+    def get_public_key(self):
+        """
+        Returns the public key.
         """
         pass
 
