@@ -30,7 +30,7 @@ def execute_queries(cursor):
         );
 
         CREATE TABLE `Content` (
-        `id` INT NOT  NULL,
+        `id` INT NOT  NULL AUTO_INCREMENT,
         `user_id` INT,
         `name` VARCHAR(255),
         `content` LONGTEXT,
