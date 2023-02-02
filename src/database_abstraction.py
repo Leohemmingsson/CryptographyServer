@@ -1,30 +1,33 @@
 class DB:
     def __init__(self) -> None:
-        from jinjasql import JinjaSql
-
-        j = JinjaSql()
         pass
 
-    def get(id: int):
+    def get_handle(self):
         """
-        Returns file with specified id.
+        Returns the DB handle
         """
         pass
 
-    def post(id: int, file: str):
+    def post(self, id: int, name: str, file: str):
         """
         Stores file on specified id.
         """
         pass
 
-    def create_file(id: int):
+    def create_file(self, id: int):
         """
         Creates a content instance, with no content.
         """
         pass
 
-    def delete_file(id: int):
+    def delete_file(self, id: int):
         """
         Deletes the content instance, with specified id.
+        """
+        pass
+
+    def close(self):
+        """
+        Closes the connection to the database.
         """
         pass
