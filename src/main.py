@@ -71,20 +71,22 @@ def encrypt_file(user_id: int, policy: str, file_name: str, content: str):
     public_key = g.sql.get_public_key()
     encrypted_data = g.abe.encrypt(public_key=public_key ,content=content, policy=policy)
 
-    exec_res = g.sql.post(user_id=user_id, file_name=file_name, content=encrypted_data)
-
+    exec_res = g.sql.post(user_id=user_id, file_name=file_name, content=content)
+    print("This should have worked")
     res = {"code": 200} if exec_res else {"code": 400}
 
     return res
 
 
 @app.route("/decrypt_file", endpoint="decrypt_file", methods=["POST"])
-@require.fields(request, response_formatter=__http_response)
+@require.fields(request)
 def decrypt_file(user_id: int, attributes: str, file_name: str):
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
     """
-    return {"code": 200}
+    print("Decrypt call")
+    file = g.sql.get(user_id=user_id,file_name=file_name,attributes=attributes)
+    return file,200
 
 
-app.run()
+app.run(host="0.0.0.0")
