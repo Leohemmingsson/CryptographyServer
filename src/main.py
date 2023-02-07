@@ -1,5 +1,4 @@
 # from pip
-import flask
 from flask import g, Flask, make_response, request
 import json
 
