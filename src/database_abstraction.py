@@ -17,6 +17,7 @@ class DB:
         """
         if file_name not in database.keys():
             return False
+        print(f"Writing \n{content}\nto {file_name}")
         database[file_name] = content
         return True
 
@@ -47,7 +48,9 @@ class DB:
         """
         Returns the file content
         """
-        return database.get(file_name, "")
+        ret = database.get(file_name, "")
+        print(f"Read:\n{ret}\nfrom file")
+        return ret
 
     def close(self):
         """

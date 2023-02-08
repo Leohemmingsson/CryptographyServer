@@ -6,8 +6,9 @@ import json
 import require
 
 # local imports
-from mock_abe import rabe
+from cryptography import ABE, CPAc17
 from database_abstraction import DB
+from rabe_py import ac17 as rac17
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -21,20 +22,22 @@ def __http_response(name="", description="", code=200, content=None, content_typ
 
     return make_response(json.dumps(formatter_response), code)
 
+# This is bad practice, but we need the static keys
+
+ac17 = ABE(CPAc17)
+ac17.generate_static_keys()
 
 # When server starts
+
+
 @app.before_request
 def init():
-    print("hello")
     cryptoType = "AC17-cp"
-    g.abe = rabe(cryptoType)
     g.sql = DB()
 
 
 @app.teardown_appcontext
 def teardown(exception):
-    print("teardown")
-    g.pop("abe")
     g.sql.close()
     g.pop("sql")
 
@@ -68,10 +71,15 @@ def encrypt_file(user_id: int, policy: str, file_name: str, content: str):
     POST a JSON containing a policy, a file path and a string of text to encrypt, returns 200 if ok.
     """
     public_key = g.sql.get_public_key()
-    encrypted_data = g.abe.encrypt(public_key=public_key ,content=content, policy=policy)
+    global ac17
+    ac17.policy = policy
+    ac17.generate_static_keys()
+    encrypted_data = str(ac17.encrypt(
+        plaintext=content
+    ))
+    exec_res = g.sql.post(
+        user_id=user_id, file_name=file_name, content=encrypted_data)
 
-    exec_res = g.sql.post(user_id=user_id, file_name=file_name, content=content)
-    print("This should have worked")
     res = {"code": 200} if exec_res else {"code": 400}
 
     return res
@@ -79,13 +87,20 @@ def encrypt_file(user_id: int, policy: str, file_name: str, content: str):
 
 @app.route("/decrypt_file", endpoint="decrypt_file", methods=["POST"])
 @require.fields(request)
-def decrypt_file(user_id: int, attributes: str, file_name: str):
+def decrypt_file(user_id: int, attributes: list[str], file_name: str):
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
     """
-    print("Decrypt call")
-    file = g.sql.get(user_id=user_id,file_name=file_name,attributes=attributes)
-    return file,200
+    global ac17
+    ac17.attributes = attributes
+    ac17.keygen()
+    file = g.sql.get(user_id=user_id, file_name=file_name,
+                     attributes=attributes)
+    file = rac17.PyAc17CpCiphertext(file)
+    decrypt_file = str(ac17.decrypt(
+        ciphertext=file
+    ))
+    return decrypt_file, 200
 
 
 app.run(host="0.0.0.0")
