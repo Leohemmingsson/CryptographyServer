@@ -4,3 +4,4 @@ git+https://github.com/ivario123/flask_require
 python-dotenv==0.21.1
 mysql-connector-python==8.0.32 
 black==23.1.0 
+git+https://github.com/Klas-Norling/rabe_py

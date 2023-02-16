@@ -1,5 +1,6 @@
 import requests
 
+
 def send_request_to_with(node_name, data):
     url = f"http://127.0.0.1:5000/{node_name}"
     response = requests.post(url, json=data)
@@ -22,8 +23,18 @@ def test_node(node_name: str):
 def test_all_nodes(nodes: list):
     for node in nodes:
         test_node(node)
-    
 
 
-test_all_nodes(["make_file", "encrypt_file", "decrypt_file", "delete_file"])
+# test_all_nodes(["make_file", "encrypt_file", "decrypt_file", "delete_file"])
 
+resp = send_request_to_with(
+    "encrypt_file",
+    {
+        "user_id": 1,
+        "file_name": "test.txt",
+        "policy": "('A' and 'B')",
+        "content": "This is the data",
+        "attributes": None,
+    },
+)
+print(resp.json())

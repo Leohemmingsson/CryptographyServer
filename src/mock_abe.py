@@ -10,3 +10,8 @@ class rabe:
 
     def decrypt(self, *args, **kwargs):
         return "EXTREMLY Decrypted data"
+
+
+if __name__ == "__main__":
+    print("oo")
+    import cryptography

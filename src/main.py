@@ -1,13 +1,12 @@
 # from pip
-import flask
 from flask import g, Flask, make_response, request
-import json
+from json import dumps
 
 # from pip git
 import require
 
 # local imports
-from mock_abe import rabe
+from abe_abstraction import *
 from database_abstraction import DB
 
 app = Flask(__name__)
@@ -20,35 +19,21 @@ def __http_response(name="", description="", code=200, content=None, content_typ
         formatter_response["content"] = content
         formatter_response["content_type"] = content_type
 
-    return make_response(json.dumps(formatter_response), code)
+    return make_response(dumps(formatter_response), code)
 
 
 # When server starts
 @app.before_request
 def init():
-    print("hello")
-    cryptoType = "AC17-cp"
-    g.abe = rabe(cryptoType)
+    g.abe = ABE(CPAc17)
     g.sql = DB()
 
 
 @app.teardown_appcontext
 def teardown(exception):
-    print("teardown")
     g.pop("abe")
     g.sql.close()
     g.pop("sql")
-
-
-@app.route("/make_file", endpoint="make_file", methods=["POST"])
-@require.fields(request, response_formatter=__http_response)
-def make_file(user_id: str, file_name: str):
-    """
-    POST a JSON containing path and return 200 if ok.
-    """
-    exec_res = g.sql.create_file(user_id, file_name)
-    res = {"code": 200} if exec_res == True else {"code": 400}
-    return res
 
 
 @app.route("/delete_file", endpoint="delete_file", methods=["POST"])
@@ -64,14 +49,32 @@ def delete_file(user_id: str, file_name: str):
 
 @app.route("/encrypt_file", endpoint="encrypt_file", methods=["POST"])
 @require.fields(request, response_formatter=__http_response)
-def encrypt_file(user_id: int, policy: str, file_name: str, content: str):
+def encrypt_file(
+    user_id: int,
+    file_name: str,
+    content: str,
+    policy: str = None,
+    attributes: str = None,
+):
+    print("here")
     """
     POST a JSON containing a policy, a file path and a string of text to encrypt, returns 200 if ok.
     """
-    public_key = g.sql.get_public_key()
-    encrypted_data = g.abe.encrypt(public_key=public_key ,content=content, policy=policy)
+    if not g.abe.load_static_keys_from_sql(g.sql):
+        # Need new keys
+        pass
+    if policy != None:
+        g.abe.set_policy(policy)
+    if attributes != None:
+        g.abe.set_attributes(attributes)
 
-    exec_res = g.sql.post(user_id=user_id, file_name=file_name, content=encrypted_data)
+    encrypted_data = g.abe.encrypt(plaintext=content)
+
+    print("here")
+    exec_res = g.sql.post_file(
+        user_id=user_id, file_name=file_name, content=encrypted_data
+    )
+    print(exec_res)
 
     res = {"code": 200} if exec_res else {"code": 400}
 
@@ -80,11 +83,38 @@ def encrypt_file(user_id: int, policy: str, file_name: str, content: str):
 
 @app.route("/decrypt_file", endpoint="decrypt_file", methods=["POST"])
 @require.fields(request, response_formatter=__http_response)
-def decrypt_file(user_id: int, attributes: str, file_name: str):
+def decrypt_file(
+    user_id: int, file_name: str, attributes: str = None, policy: str = None
+):
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
     """
-    return {"code": 200}
+    if not g.load_static_keys_from_sql(g.sql):
+        # If there is no static keys, there should not be any files as well
+        return {"code": 400, "description": "No static keys found."}
+
+    if policy != None:
+        g.abe.set_policy(attributes)
+    if attributes != None:
+        g.abe.set_attributes(attributes)
+
+    ciphertext = g.sql.get(user_id=user_id, file_name=file_name)
+
+    plaintext = g.abe.decrypt(ciphertext=ciphertext)
+
+    return {"code": 200, "content": plaintext}
 
 
 app.run()
+
+
+# if __name__ == "__main__":
+#     scheme = ABE(scheme=CPAc17, attributes=["A", "B"], policy='("A" and "B")')
+#     pk, msk = scheme.generate_static_keys()
+#     print(type(pk))
+#     print()
+#     print(type(msk))
+#     scheme.keygen()
+#     ciphertext = scheme.encrypt("Secret 2")
+#     plaintext_after = scheme.decrypt(ciphertext)
+#     print(plaintext_after)
