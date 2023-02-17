@@ -26,7 +26,7 @@ def __http_response(name="", description="", code=200, content=None, content_typ
 # When server starts
 @app.before_request
 def init():
-    g.abe = ABE(CPAc17)
+    g.abe = ABE(KPAc17)
     g.sql = DB()
 
 
@@ -69,12 +69,10 @@ def encrypt_file(
         g.abe.set_attributes(attributes)
 
     encrypted_data = g.abe.encrypt(plaintext=content)
-    print(str(encrypted_data))
 
     exec_res = g.sql.post_file(
         user_id=user_id, file_name=file_name, content=str(encrypted_data)
     )
-    print(exec_res)
 
     res = {"code": 200} if exec_res else {"code": 400}
 
@@ -94,7 +92,7 @@ def decrypt_file(
         return {"code": 400, "description": "No static keys found."}
 
     if policy != None:
-        g.abe.set_policy(attributes)
+        g.abe.set_policy(policy)
     if attributes != None:
         g.abe.set_attributes(attributes)
 

@@ -22,7 +22,6 @@ class DB:
         Stores file on specified id.
         """
 
-        print("here")
         global_values_id = "1"
 
         sql = "INSERT INTO Content (user_id, name, content, content_type, global_values) VALUES (%s, %s, %s, %s, %s)"

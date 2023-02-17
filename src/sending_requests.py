@@ -25,7 +25,6 @@ def send_request_to_with(node_name, data):
 #         "user_id": "1",
 #         "file_name": "test.txt",
 #         "policy": '("A" and "B")',
-#         "content": "This is the data",
 #         "attributes": ["A", "B"],
 #     },
 # )
