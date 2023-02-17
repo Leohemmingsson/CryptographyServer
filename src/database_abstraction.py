@@ -17,15 +17,16 @@ class DB:
         )
         self.cursor = self.mydb.cursor()
 
-    def post_file(self, user, file_name, content):
+    def post_file(self, user_id, file_name, content):
         """
         Stores file on specified id.
         """
 
-        global_values_id = 1
+        print("here")
+        global_values_id = "1"
 
         sql = "INSERT INTO Content (user_id, name, content, content_type, global_values) VALUES (%s, %s, %s, %s, %s)"
-        val = (user, file_name, content, "text/plain", global_values_id)
+        val = (user_id, file_name, content, "text/plain", global_values_id)
 
         self.cursor.execute(sql, val)
         self.mydb.commit()
@@ -41,6 +42,10 @@ class DB:
             (user_id, file_name),
         )
 
+        result = self.cursor.fetchone()
+
+        return result[0]
+
     def delete_file(self, user_id, file_name):
         """
         Deletes the content instance, with specified id.
@@ -51,12 +56,13 @@ class DB:
         self.cursor.execute(sql, val)
         self.mydb.commit()
 
+        return True
+
     def get_public_and_master_key(self) -> tuple[str, str]:
         """
         Returns the public key.
         """
-        global_values_id = 1
-
+        global_values_id = [1]
         self.cursor.execute(
             "SELECT public_key, master_key FROM GlobalValues WHERE id = %s",
             (global_values_id),
@@ -78,6 +84,17 @@ class DB:
         )
 
         return "gk"
+
+    def update_pk_msk(self, pk, msk, id):
+        """
+        Updates the public key and master key.
+        """
+
+        sql = "UPDATE GlobalValues SET public_key = %s, master_key = %s WHERE id = %s"
+        values = (pk, msk, id)
+
+        self.cursor.execute(sql, values)
+        self.mydb.commit()
 
     def close(self):
         """

@@ -7,34 +7,40 @@ def send_request_to_with(node_name, data):
     return response
 
 
-def test_node(node_name: str):
-    data = {
-        "content": "This is the data",
-        "policy": {"area": "testing", "access": 2},
-        "file_name": "test.txt",
-        "user_id": 1,
-    }
-    response = send_request_to_with(node_name, data)
-
-    print(response.status_code)
-    print(response.json())
-
-
-def test_all_nodes(nodes: list):
-    for node in nodes:
-        test_node(node)
+# resp = send_request_to_with(
+#     "encrypt_file",
+#     {
+#         "user_id": "1",
+#         "file_name": "test.txt",
+#         "policy": '("A" and "B")',
+#         "content": "This is the data",
+#         "attributes": ["A", "B"],
+#     },
+# )
 
 
-# test_all_nodes(["make_file", "encrypt_file", "decrypt_file", "delete_file"])
+# resp = send_request_to_with(
+#     "decrypt_file",
+#     {
+#         "user_id": "1",
+#         "file_name": "test.txt",
+#         "policy": '("A" and "B")',
+#         "content": "This is the data",
+#         "attributes": ["A", "B"],
+#     },
+# )
 
 resp = send_request_to_with(
-    "encrypt_file",
+    "delete_file",
     {
-        "user_id": 1,
+        "user_id": "1",
         "file_name": "test.txt",
-        "policy": "('A' and 'B')",
+        "policy": '("A" and "B")',
         "content": "This is the data",
-        "attributes": None,
+        "attributes": ["A", "B"],
     },
 )
+
+
+print(resp.status_code)
 print(resp.json())

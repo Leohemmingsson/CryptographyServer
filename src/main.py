@@ -8,6 +8,7 @@ import require
 # local imports
 from abe_abstraction import *
 from database_abstraction import DB
+from rabe_py import ac17
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -56,7 +57,6 @@ def encrypt_file(
     policy: str = None,
     attributes: str = None,
 ):
-    print("here")
     """
     POST a JSON containing a policy, a file path and a string of text to encrypt, returns 200 if ok.
     """
@@ -69,10 +69,10 @@ def encrypt_file(
         g.abe.set_attributes(attributes)
 
     encrypted_data = g.abe.encrypt(plaintext=content)
+    print(str(encrypted_data))
 
-    print("here")
     exec_res = g.sql.post_file(
-        user_id=user_id, file_name=file_name, content=encrypted_data
+        user_id=user_id, file_name=file_name, content=str(encrypted_data)
     )
     print(exec_res)
 
@@ -89,7 +89,7 @@ def decrypt_file(
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
     """
-    if not g.load_static_keys_from_sql(g.sql):
+    if not g.abe.load_static_keys_from_sql(g.sql):
         # If there is no static keys, there should not be any files as well
         return {"code": 400, "description": "No static keys found."}
 
@@ -98,23 +98,25 @@ def decrypt_file(
     if attributes != None:
         g.abe.set_attributes(attributes)
 
-    ciphertext = g.sql.get(user_id=user_id, file_name=file_name)
+    ciphertext = g.sql.get_file(user_id=user_id, file_name=file_name)
+    print(ciphertext)
+    g.abe.keygen()
 
     plaintext = g.abe.decrypt(ciphertext=ciphertext)
 
-    return {"code": 200, "content": plaintext}
+    return {"code": 200, "content": plaintext, "content_type": "text/plain"}
 
 
 app.run()
 
-
 # if __name__ == "__main__":
-#     scheme = ABE(scheme=CPAc17, attributes=["A", "B"], policy='("A" and "B")')
-#     pk, msk = scheme.generate_static_keys()
-#     print(type(pk))
-#     print()
-#     print(type(msk))
-#     scheme.keygen()
-#     ciphertext = scheme.encrypt("Secret 2")
-#     plaintext_after = scheme.decrypt(ciphertext)
-#     print(plaintext_after)
+# scheme = ABE(scheme=CPAc17, attributes=["A", "B"], policy='("A" and "B")')
+# pk, msk = scheme.generate_static_keys()
+# # print(type(pk))
+# # print()
+# # print(type(msk))
+# scheme.keygen()
+# ciphertext = scheme.encrypt("Secret 2")
+# ciphertext = str(ciphertext)
+# plaintext_after = scheme.decrypt(ciphertext)
+# print(plaintext_after)
