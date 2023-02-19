@@ -7,34 +7,31 @@ def send_request_to_with(node_name, data):
     return response
 
 
-def test_node(node_name: str):
-    data = {
-        "content": "This is the data",
-        "policy": {"area": "testing", "access": 2},
-        "file_name": "test.txt",
-        "user_id": 1,
-    }
-    response = send_request_to_with(node_name, data)
-
-    print(response.status_code)
-    print(response.json())
-
-
-def test_all_nodes(nodes: list):
-    for node in nodes:
-        test_node(node)
-
-
-# test_all_nodes(["make_file", "encrypt_file", "decrypt_file", "delete_file"])
-
-resp = send_request_to_with(
-    "encrypt_file",
+def get_post_data():
     {
-        "user_id": 1,
+        "user_id": "1",
         "file_name": "test.txt",
-        "policy": "('A' and 'B')",
+        "policy": '("A" and "B")',
         "content": "This is the data",
-        "attributes": None,
+        "attributes": ["A", "B"],
     },
-)
+
+
+def encrypt_file(data):
+    resp = send_request_to_with("encrypt_file", data)
+    return resp
+
+
+def decrypt_file(data):
+    resp = send_request_to_with("decrypt_file", data)
+    return resp
+
+
+def delete_file(data):
+    resp = send_request_to_with("delete_file", data)
+    return resp
+
+
+resp = encrypt_file(get_post_data())
+print(resp.status_code)
 print(resp.json())
