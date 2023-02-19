@@ -1,3 +1,21 @@
+# CryptographyServer
+This is a flask server that is supposed to be a api for ABE (Attribute Based Encryption) schemes. 
+The server is written in python flask and is connected to through a sql server for content management.
+
+
+# How to start the server:
+1. Create a .env file for DB connection:
+```
+SERVER_IP=<IP>
+DB_USER=<UserName>
+DB_PASS=<Password>
+DATABASE=<DatabaseName>
+```
+2. install dependencies from requirements.txt (`pip install -r requirements.txt`)
+3. Run main.py (`python src/main.py`)
+
+# Sending requests to the server
+```python
 import requests
 
 
@@ -35,3 +53,4 @@ def delete_file(data):
 resp = encrypt_file(get_post_data())
 print(resp.status_code)
 print(resp.json())
+```

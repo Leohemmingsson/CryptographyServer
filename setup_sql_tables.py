@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 
 
 def connect_to_db():
+    """
+    Creates the connection to the DB through mysql connector.
+    All environmental variables are loaded from .env file.
+    """
     load_dotenv()
 
     mydb = mysql.connector.connect(
@@ -20,6 +24,9 @@ def connect_to_db():
 
 
 def execute_queries(cursor):
+    """
+    Creates the two tables with all the different columns, setting PK, FK and AUTO_INCREMENT
+    """
     queries = """
        CREATE TABLE `GlobalValues` (
         `id` INT NOT NULL AUTO_INCREMENT,
@@ -46,6 +53,10 @@ def execute_queries(cursor):
 
 
 def create_tables_in(mydb):
+    """
+    Returns decent error messages if needed.
+    """
+
     cursor = mydb.cursor()
     try:
         execute_queries(cursor)
@@ -54,8 +65,7 @@ def create_tables_in(mydb):
         print(f"{err}")
 
 
+### RUN ###
 mydb = connect_to_db()
-
 create_tables_in(mydb)
-
 mydb.close()

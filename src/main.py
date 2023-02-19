@@ -106,15 +106,3 @@ def decrypt_file(
 
 
 app.run()
-
-# if __name__ == "__main__":
-# scheme = ABE(scheme=CPAc17, attributes=["A", "B"], policy='("A" and "B")')
-# pk, msk = scheme.generate_static_keys()
-# # print(type(pk))
-# # print()
-# # print(type(msk))
-# scheme.keygen()
-# ciphertext = scheme.encrypt("Secret 2")
-# ciphertext = str(ciphertext)
-# plaintext_after = scheme.decrypt(ciphertext)
-# print(plaintext_after)
