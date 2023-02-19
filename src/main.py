@@ -97,7 +97,6 @@ def decrypt_file(
         g.abe.set_attributes(attributes)
 
     ciphertext = g.sql.get_file(user_id=user_id, file_name=file_name)
-    print(ciphertext)
     g.abe.keygen()
 
     plaintext = g.abe.decrypt(ciphertext=ciphertext)
