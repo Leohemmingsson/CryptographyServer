@@ -28,11 +28,11 @@ def execute_queries(cursor):
     Creates the two tables with all the different columns, setting PK, FK and AUTO_INCREMENT
     """
     queries = """
-        CREATE TABLE `GlobalValues` (
+       CREATE TABLE `GlobalValues` (
         `id` INT NOT NULL AUTO_INCREMENT,
-        `public_key` VARCHAR(4096),
-        `master_key` VARCHAR(4096),
-        `global_key` VARCHAR(4096),
+        `public_key` LONGTEXT,
+        `master_key` LONGTEXT,
+        `global_key` LONGTEXT,
         PRIMARY KEY (`id`)
         );
 
@@ -42,9 +42,9 @@ def execute_queries(cursor):
         `name` VARCHAR(255),
         `content` LONGTEXT,
         `content_type` VARCHAR(255),
-        `gloabl_values` INT NOT NULL,
+        `global_values` INT NOT NULL,
         PRIMARY KEY (`id`),
-        FOREIGN KEY (`gloabl_values`) REFERENCES `GlobalValues`(`id`)
+        FOREIGN KEY (`global_values`) REFERENCES `GlobalValues`(`id`)
         );
     """
 
