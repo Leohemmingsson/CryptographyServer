@@ -9,10 +9,10 @@ def send_request_to_with(node_name, data):
 
 def get_post_data():
     return {
-        "user_id": "1",
+        "user_id": "2",
         "file_name": "test.txt",
         "policy": '("A" and "B")',
-        "content": "This is the data",
+        "content": "With AW11",
         "attributes": ["A", "B"],
     }
 

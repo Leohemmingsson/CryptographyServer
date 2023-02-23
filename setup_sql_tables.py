@@ -49,7 +49,7 @@ def execute_queries(cursor):
     FOREIGN KEY (`global_values`) REFERENCES `GlobalValues`(`id`)
     );
 
-
+    alter table Content add constraint file_space UNIQUE (user_id, name);
     """
 
     cursor.execute(queries)

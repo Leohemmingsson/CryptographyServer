@@ -25,7 +25,7 @@ def __http_response(name="", description="", code=200, content=None, content_typ
 # When server starts
 @app.before_request
 def init():
-    g.abe = ABE(AW11)
+    g.abe = ABE(CPAc17)
     g.sql = DB()
 
 
@@ -66,6 +66,8 @@ def encrypt_file(
         g.abe.set_policy(policy)
     if attributes != None:
         g.abe.set_attributes(attributes)
+
+    g.abe.keygen()  # Needed for aw11, but need to know what values to give as args
 
     encrypted_data = g.abe.encrypt(plaintext=content)
 
@@ -109,15 +111,9 @@ def get_static(policy: str = None, attributes: str = None):
     """
     POST a JSON containing path and return 200 if ok.
     """
-    keys = g.abe.generate_static_keys()
+    gk = g.abe.generate_static_keys()
 
-    print(keys)
-    if policy != None:
-        g.abe.set_policy(policy)
-    if attributes != None:
-        g.abe.set_attributes(attributes)
-
-    res = {"code": 200, "content": str(keys), "content_type": str(type(keys))}
+    res = {"code": 200}
     return res
 
 

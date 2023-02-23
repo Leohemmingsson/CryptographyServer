@@ -53,7 +53,7 @@ class KPAc17(ABEscheme):
         * True if keys were loaded successfully, False otherwise
         """
         try:
-            pk, msk = super().load_pk_msk(sql_handle)
+            pk, msk = super().load_pk_msk(sql_handle, "Ac17")
         except TypeError:
             return False
 

@@ -57,53 +57,52 @@ class DB:
 
         return True
 
-    def get_public_and_master_key(self) -> tuple[str, str]:
+    def get_public_and_master_key(self, scheme) -> tuple[str, str]:
         """
         Returns the public key.
         """
-        global_values_id = [1]
         self.cursor.execute(
-            "SELECT public_key, master_key FROM GlobalValues WHERE id = %s",
-            (global_values_id),
+            "SELECT public_key, master_key FROM GlobalValues WHERE scheme = %s",
+            ([scheme]),
         )
 
         result = self.cursor.fetchone()
 
         return result
 
-    def get_global_and_public_key(self):
+    def get_global_key(self, scheme):
         """
         Returns the global key.
         """
 
-        global_values_id = [1]
-
         self.cursor.execute(
-            "SELECT global_key, public_key FROM GlobalValues WHERE id = %s",
-            (global_values_id),
+            "SELECT global_key FROM GlobalValues WHERE scheme = %s",
+            ([scheme]),
         )
 
         result = self.cursor.fetchone()
 
         return result
 
-    def update_pk_msk(self, pk, msk, id):
+    def update_pk_msk(self, pk, msk, scheme):
         """
         Updates the public key and master key.
         """
 
-        sql = "UPDATE GlobalValues SET public_key = %s, master_key = %s WHERE id = %s"
-        values = (pk, msk, id)
+        sql = (
+            "UPDATE GlobalValues SET public_key = %s, master_key = %s WHERE scheme = %s"
+        )
+        values = (pk, msk, scheme)
 
         self.cursor.execute(sql, values)
         self.mydb.commit()
 
-    def update_gk(self, gk, id):
+    def update_gk(self, gk, scheme):
         """
         Updates the global key.
         """
-        sql = "UPDATE GlobalValues SET global_key = %s WHERE id = %s"
-        values = (gk, id)
+        sql = "UPDATE GlobalValues SET global_key = %s WHERE scheme= %s"
+        values = (gk, scheme)
 
         self.cursor.execute(sql, values)
         self.mydb.commit()

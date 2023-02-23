@@ -37,7 +37,6 @@ class AW11(ABEscheme):
         This function generates a static key, the global key (gk).
         """
         self.gk = aw11.setup()
-        self.pk = aw11.authgen(self.gk, self.attributes)
         return self.gk
 
     def load_static_keys_from_sql(self, sql_handle):
@@ -50,12 +49,11 @@ class AW11(ABEscheme):
         * True if the keys were loaded successfully, False otherwise
         """
         try:
-            gk, pk = super().load_gk_pk(sql_handle)
+            gk = super().load_gk(sql_handle, "AW11")
         except TypeError:
             return False
 
         self.gk = aw11.PyAw11GlobalKey(gk)
-        self.pk = aw11.PyAw11PublicKey(pk)
         return True
 
     def keygen(self, user_name: str, user_attribute: list[str]):
