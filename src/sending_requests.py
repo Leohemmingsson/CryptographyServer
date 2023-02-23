@@ -9,11 +9,11 @@ def send_request_to_with(node_name, data):
 
 def get_post_data():
     return {
-        "user_id": "2",
+        "user_id": "1",
         "file_name": "test.txt",
-        "policy": '("A" and "B")',
-        "content": "With AW11",
-        "attributes": ["A", "B"],
+        "policy": '("A" or ("B" and "C"))',
+        "content": "This is a secret message that should be encrypted and stored in the database, so it will not be accessed.",
+        "attributes": ["A", "B", "C"],
     }
 
 
