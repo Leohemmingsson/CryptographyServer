@@ -30,6 +30,9 @@ class AW11(ABEscheme):
         """
 
         _, sk = self.__keygen(user_id)
+
+        ciphertext = aw11.PyAw11Ciphertext(str(ciphertext))
+
         plaintext = aw11.decrypt(self.gk, sk, ciphertext)
         return plaintext
 

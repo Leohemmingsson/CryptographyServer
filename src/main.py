@@ -25,7 +25,7 @@ def __http_response(name="", description="", code=200, content=None, content_typ
 # Before *each* request
 @app.before_request
 def init():
-    g.abe = ABE(CPAc17)
+    g.abe = ABE(AW11)
     g.sql = DB()
 
 
@@ -67,11 +67,11 @@ def decrypt_file(
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
     """
-    try:
-        plaintext = __decrypt_file_fun(user_id, file_name, attributes, policy)
-        res = {"code": 200, "content": plaintext, "content_type": "text/plain"}
-    except Exception as e:
-        res = {"code": 400, "description": str(e)}
+    # try:
+    plaintext = __decrypt_file_func(user_id, file_name, attributes, policy)
+    res = {"code": 200, "content": plaintext, "content_type": "text/plain"}
+    # except Exception as e:
+    #     res = {"code": 400, "description": str(e)}
 
     return res
 
@@ -110,7 +110,7 @@ def __encrypt_file_func(user_id, file_name, content, policy=None, attributes=Non
     sql_handle.post_file(user_id, file_name, str(encrypted_data))
 
 
-def __decrypt_file_fun(user_id, file_name, attributes, policy):
+def __decrypt_file_func(user_id, file_name, attributes, policy):
     """
     Function that decrypts a file and returns the plaintext.
     """
@@ -125,7 +125,7 @@ def __decrypt_file_fun(user_id, file_name, attributes, policy):
     if attributes != None:
         abe_handle.set_attributes(attributes)
 
-    ciphertext = abe_handle.get_file(user_id=user_id, file_name=file_name)
+    ciphertext = sql_handle.get_file(user_id=user_id, file_name=file_name)
 
     plaintext = abe_handle.decrypt(ciphertext, user_id)
 

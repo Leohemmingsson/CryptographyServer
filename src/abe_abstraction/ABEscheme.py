@@ -23,6 +23,10 @@ class ABEscheme(ABC):
     def load_static_keys_from_sql(self, sql_handle) -> None:
         pass
 
+    @abstractmethod
+    def generate_static_keys(self) -> None:
+        pass
+
     def load_pk_msk(self, sql_handle, scheme):
         pk, msk = sql_handle.get_public_and_master_key(scheme)
         if pk is None or msk is None:

@@ -37,6 +37,6 @@ def get_static(data):
     return resp
 
 
-resp = encrypt_file(get_post_data())
+resp = decrypt_file(get_post_data())
 print(resp.status_code)
 print(resp.json())
