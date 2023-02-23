@@ -71,18 +71,21 @@ class DB:
 
         return result
 
-    def get_global_key(self):
+    def get_global_and_public_key(self):
         """
         Returns the global key.
         """
 
-        global_values_id = 1
+        global_values_id = [1]
 
         self.cursor.execute(
-            "SELECT global_key FROM GlobalValues WHERE id = %s", (global_values_id)
+            "SELECT global_key, public_key FROM GlobalValues WHERE id = %s",
+            (global_values_id),
         )
 
-        return "gk"
+        result = self.cursor.fetchone()
+
+        return result
 
     def update_pk_msk(self, pk, msk, id):
         """
@@ -91,6 +94,16 @@ class DB:
 
         sql = "UPDATE GlobalValues SET public_key = %s, master_key = %s WHERE id = %s"
         values = (pk, msk, id)
+
+        self.cursor.execute(sql, values)
+        self.mydb.commit()
+
+    def update_gk(self, gk, id):
+        """
+        Updates the global key.
+        """
+        sql = "UPDATE GlobalValues SET global_key = %s WHERE id = %s"
+        values = (gk, id)
 
         self.cursor.execute(sql, values)
         self.mydb.commit()

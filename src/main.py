@@ -8,7 +8,6 @@ import require
 # local imports
 from abe_abstraction import *
 from database_abstraction import DB
-from rabe_py import ac17
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -26,7 +25,7 @@ def __http_response(name="", description="", code=200, content=None, content_typ
 # When server starts
 @app.before_request
 def init():
-    g.abe = ABE(KPAc17)
+    g.abe = ABE(AW11)
     g.sql = DB()
 
 
@@ -102,6 +101,24 @@ def decrypt_file(
     plaintext = g.abe.decrypt(ciphertext=ciphertext)
 
     return {"code": 200, "content": plaintext, "content_type": "text/plain"}
+
+
+@app.route("/get_static", endpoint="get_static", methods=["POST"])
+@require.fields(request, response_formatter=__http_response)
+def get_static(policy: str = None, attributes: str = None):
+    """
+    POST a JSON containing path and return 200 if ok.
+    """
+    keys = g.abe.generate_static_keys()
+
+    print(keys)
+    if policy != None:
+        g.abe.set_policy(policy)
+    if attributes != None:
+        g.abe.set_attributes(attributes)
+
+    res = {"code": 200, "content": str(keys), "content_type": str(type(keys))}
+    return res
 
 
 app.run()

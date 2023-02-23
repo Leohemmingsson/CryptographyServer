@@ -21,12 +21,13 @@ class ABEscheme:
             raise TypeError
         return pk, msk
 
-    def load_gk(self, sql_handle):
-        gk = sql_handle.get_global_keys()
-        return gk
+    def load_gk_pk(self, sql_handle):
+        gk, pk = sql_handle.get_global_and_public_key()
+        return gk, pk
 
     def set_policy(self, policy: str) -> None:
         self.policy = policy
 
     def set_attributes(self, attributes: list[str]) -> None:
+        print("o")
         self.attributes = attributes
