@@ -11,9 +11,9 @@ def get_post_data():
     return {
         "user_id": "1",
         "file_name": "test.txt",
-        "policy": '("A" or ("B" and "C"))',
-        "content": "This is a secret message that should be encrypted and stored in the database, so it will not be accessed.",
-        "attributes": ["A", "B", "C"],
+        "policy": '("A" and "B")',
+        "content": "A secret message",
+        "attributes": ["A", "B"],
     }
 
 
