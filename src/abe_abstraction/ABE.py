@@ -2,11 +2,11 @@ from typing import Type
 
 from .CPAc17 import CPAc17
 from .KPAc17 import KPAc17
-from .AW11 import Aw11
+from .AW11 import AW11
 
 
 class ABE:
-    valid_types: list[Type] = [Aw11, KPAc17, CPAc17]
+    valid_types: list[Type] = [AW11, KPAc17, CPAc17]
 
     # This is run before init and expects a return value
     def __new__(

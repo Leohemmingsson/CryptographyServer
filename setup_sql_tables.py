@@ -28,24 +28,28 @@ def execute_queries(cursor):
     Creates the two tables with all the different columns, setting PK, FK and AUTO_INCREMENT
     """
     queries = """
-        CREATE TABLE `GlobalValues` (
-        `id` INT NOT NULL AUTO_INCREMENT,
-        `public_key` VARCHAR(4096),
-        `master_key` VARCHAR(4096),
-        `global_key` VARCHAR(4096),
-        PRIMARY KEY (`id`)
-        );
+    CREATE TABLE `GlobalValues` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `public_key` LONGTEXT,
+    `master_key` LONGTEXT,
+    `global_key` LONGTEXT,
+    `scheme` VARCHAR(255),
+    PRIMARY KEY (`id`),
+    UNIQUE (scheme)
+    );
 
-        CREATE TABLE `Content` (
-        `id` INT NOT  NULL AUTO_INCREMENT,
-        `user_id` INT,
-        `name` VARCHAR(255),
-        `content` LONGTEXT,
-        `content_type` VARCHAR(255),
-        `gloabl_values` INT NOT NULL,
-        PRIMARY KEY (`id`),
-        FOREIGN KEY (`gloabl_values`) REFERENCES `GlobalValues`(`id`)
-        );
+    CREATE TABLE `Content` (
+    `id` INT NOT  NULL AUTO_INCREMENT,
+    `user_id` INT,
+    `name` VARCHAR(255),
+    `content` LONGTEXT,
+    `content_type` VARCHAR(255),
+    `global_values` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`global_values`) REFERENCES `GlobalValues`(`id`)
+    );
+
+    alter table Content add constraint file_space UNIQUE (user_id, name);
     """
 
     cursor.execute(queries)

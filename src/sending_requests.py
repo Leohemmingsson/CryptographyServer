@@ -8,13 +8,13 @@ def send_request_to_with(node_name, data):
 
 
 def get_post_data():
-    {
+    return {
         "user_id": "1",
         "file_name": "test.txt",
         "policy": '("A" and "B")',
-        "content": "This is the data",
+        "content": "A secret message",
         "attributes": ["A", "B"],
-    },
+    }
 
 
 def encrypt_file(data):
@@ -32,6 +32,11 @@ def delete_file(data):
     return resp
 
 
-resp = encrypt_file(get_post_data())
+def get_static(data):
+    resp = send_request_to_with("get_static", data)
+    return resp
+
+
+resp = decrypt_file(get_post_data())
 print(resp.status_code)
 print(resp.json())
