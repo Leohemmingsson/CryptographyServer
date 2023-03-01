@@ -55,7 +55,7 @@ def encrypt_file(
     file_name: str,
     content: str,
     policy: str = None,
-    attributes: str = None,
+    attributes: list = None,
 ):
     """
     POST a JSON containing a policy, a file path and a string of text to encrypt, returns 200 if ok.
@@ -82,7 +82,7 @@ def encrypt_file(
 @app.route("/decrypt_file", endpoint="decrypt_file", methods=["POST"])
 @require.fields(request, response_formatter=__http_response)
 def decrypt_file(
-    user_id: int, file_name: str, attributes: str = None, policy: str = None
+    user_id: str, file_name: str, attributes: list = None, policy: str = None
 ):
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
