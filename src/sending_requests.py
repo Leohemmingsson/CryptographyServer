@@ -2,7 +2,7 @@ import requests
 
 
 def send_request_to_with(node_name, data):
-    url = f"http://127.0.0.1:5000/{node_name}"
+    url = f"http://192.168.68.237:5000/{node_name}"
     response = requests.post(url, json=data)
     return response
 
@@ -37,6 +37,6 @@ def get_static(data):
     return resp
 
 
-resp = decrypt_file(get_post_data())
+resp = encrypt_file(get_post_data())
 print(resp.status_code)
 print(resp.json())

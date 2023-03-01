@@ -40,7 +40,7 @@ def teardown(exception):
 @app.route("/encrypt_file", endpoint="encrypt_file", methods=["POST"])
 @require.fields(request, response_formatter=__http_response)
 def encrypt_file(
-    user_id: int,
+    user_id: str,
     file_name: str,
     content: str,
     policy: str = None,
