@@ -12,7 +12,7 @@ def get_post_data():
         "user_id": "1",
         "file_name": "test.txt",
         "policy": '("A" and "B")',
-        "content": "This is the data",
+        "content": "A secret message",
         "attributes": ["A", "B"],
     }
 
@@ -32,6 +32,11 @@ def delete_file(data):
     return resp
 
 
-resp = delete_file(get_post_data())
+def get_static(data):
+    resp = send_request_to_with("get_static", data)
+    return resp
+
+
+resp = decrypt_file(get_post_data())
 print(resp.status_code)
 print(resp.json())

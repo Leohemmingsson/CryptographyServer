@@ -8,7 +8,6 @@ import require
 # local imports
 from abe_abstraction import *
 from database_abstraction import DB
-from rabe_py import ac17
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -23,29 +22,19 @@ def __http_response(name="", description="", code=200, content=None, content_typ
     return make_response(dumps(formatter_response), code)
 
 
-# When server starts
+# Before *each* request
 @app.before_request
 def init():
-    g.abe = ABE(KPAc17)
+    g.abe = ABE(CPAc17)
     g.sql = DB()
 
 
+# This happens after *each* request
 @app.teardown_appcontext
 def teardown(exception):
     g.pop("abe")
     g.sql.close()
     g.pop("sql")
-
-
-@app.route("/delete_file", endpoint="delete_file", methods=["POST"])
-@require.fields(request, response_formatter=__http_response)
-def delete_file(user_id: str, file_name: str):
-    """
-    POST a JSON containing path and return 200 if ok.
-    """
-    exec_res = g.sql.delete_file(user_id, file_name)
-    res = {"code": 200} if exec_res == True else {"code": 400}
-    return res
 
 
 @app.route("/encrypt_file", endpoint="encrypt_file", methods=["POST"])
@@ -60,21 +49,12 @@ def encrypt_file(
     """
     POST a JSON containing a policy, a file path and a string of text to encrypt, returns 200 if ok.
     """
-    if not g.abe.load_static_keys_from_sql(g.sql):
-        # Need new keys
-        pass
-    if policy != None:
-        g.abe.set_policy(policy)
-    if attributes != None:
-        g.abe.set_attributes(attributes)
+    try:
+        __encrypt_file_func(user_id, file_name, content, policy, attributes)
+        res = {"code": 200, "description": "File was created"}
 
-    encrypted_data = g.abe.encrypt(plaintext=content)
-
-    exec_res = g.sql.post_file(
-        user_id=user_id, file_name=file_name, content=str(encrypted_data)
-    )
-
-    res = {"code": 200} if exec_res else {"code": 400}
+    except Exception as e:
+        res = {"code": 400, "description": str(e)}
 
     return res
 
@@ -87,21 +67,69 @@ def decrypt_file(
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
     """
-    if not g.abe.load_static_keys_from_sql(g.sql):
-        # If there is no static keys, there should not be any files as well
-        return {"code": 400, "description": "No static keys found."}
+    # try:
+    plaintext = __decrypt_file_func(user_id, file_name, attributes, policy)
+    res = {"code": 200, "content": plaintext, "content_type": "text/plain"}
+    # except Exception as e:
+    #     res = {"code": 400, "description": str(e)}
+
+    return res
+
+
+@app.route("/delete_file", endpoint="delete_file", methods=["POST"])
+@require.fields(request, response_formatter=__http_response)
+def delete_file(user_id: str, file_name: str):
+    """
+    POST a JSON containing path and return 200 if ok.
+    """
+    try:
+        g.sql.delete_file(user_id, file_name)
+        res = {"code": 200, "description": "File has been removed"}
+
+    except Exception as e:
+        res = {"code": 400, "description": str(e)}
+    return res
+
+
+def __encrypt_file_func(user_id, file_name, content, policy=None, attributes=None):
+    """
+    Function that encrypts a file and stores it in the database.
+    """
+    # Getting values from flask global values
+    abe_handle = g.abe
+    sql_handle = g.sql
+
+    abe_handle.load_static_keys_from_sql(sql_handle)
 
     if policy != None:
-        g.abe.set_policy(policy)
+        abe_handle.set_policy(policy)
     if attributes != None:
-        g.abe.set_attributes(attributes)
+        abe_handle.set_attributes(attributes)
 
-    ciphertext = g.sql.get_file(user_id=user_id, file_name=file_name)
-    g.abe.keygen()
+    encrypted_data = abe_handle.encrypt(content, user_id)
+    sql_handle.post_file(user_id, file_name, str(encrypted_data))
 
-    plaintext = g.abe.decrypt(ciphertext=ciphertext)
 
-    return {"code": 200, "content": plaintext, "content_type": "text/plain"}
+def __decrypt_file_func(user_id, file_name, attributes, policy):
+    """
+    Function that decrypts a file and returns the plaintext.
+    """
+    # Getting values from flask global values
+    abe_handle = g.abe
+    sql_handle = g.sql
+
+    abe_handle.load_static_keys_from_sql(sql_handle)
+
+    if policy != None:
+        abe_handle.set_policy(policy)
+    if attributes != None:
+        abe_handle.set_attributes(attributes)
+
+    ciphertext = sql_handle.get_file(user_id=user_id, file_name=file_name)
+
+    plaintext = abe_handle.decrypt(ciphertext, user_id)
+
+    return plaintext
 
 
 app.run()
