@@ -91,6 +91,16 @@ def delete_file(user_id: str, file_name: str):
     return res
 
 
+@app.route("/reset_files", endpoint="reset_files", methods=["POST"])
+def reset_files():
+    try:
+        g.sql.reset_files()
+        res = {"code": 200, "description": "Files have been removed"}
+    except Exception as e:
+        res = {"code": 400, "description": str(e)}
+    return res
+
+
 def __encrypt_file_func(user_id, file_name, content, policy=None, attributes=None):
     """
     Function that encrypts a file and stores it in the database.

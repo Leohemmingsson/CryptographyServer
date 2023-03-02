@@ -107,6 +107,14 @@ class DB:
         self.cursor.execute(sql, values)
         self.mydb.commit()
 
+    def reset_files(self):
+        """
+        Removes all files from the database.
+        """
+
+        self.cursor.execute("DELETE FROM Content where id != 99999999999")
+        self.mydb.commit()
+
     def close(self):
         """
         Closes the connection to the database.
