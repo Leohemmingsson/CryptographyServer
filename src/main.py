@@ -25,7 +25,7 @@ def __http_response(name="", description="", code=200, content=None, content_typ
 # Before *each* request
 @app.before_request
 def init():
-    g.abe = ABE(CPAc17)
+    g.abe = ABE(AW11)
     g.sql = DB()
 
 
@@ -132,4 +132,14 @@ def __decrypt_file_func(user_id, file_name, attributes, policy):
     return plaintext
 
 
-app.run()
+if __name__ == "__main__":
+    app.run()
+
+    # x = ABE(AW11)
+    # sql = DB()
+
+    # x.set_policy('"A" and "B"')
+    # x.set_attributes(["A", "B"])
+
+    # x.load_static_keys_from_sql(sql)
+    # x.test()

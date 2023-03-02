@@ -41,7 +41,7 @@ class ABEscheme(ABC):
         return gk[0]
 
     def set_policy(self, policy: str) -> None:
-        self.policy = policy
+        self.policy = str(policy)
 
     def set_attributes(self, attributes: list[str]) -> None:
-        self.attributes = attributes
+        self.attributes = list(attributes)
