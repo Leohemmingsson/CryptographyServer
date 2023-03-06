@@ -2,8 +2,8 @@ import requests
 
 
 def send_request_to_with(node_name, data):
-    # url = f"http://31.208.238.201:59931/{node_name}"
-    url = f"http://127.0.0.1:5000/{node_name}"
+    url = f"http://31.208.238.201:59931/{node_name}"
+    # url = f"http://127.0.0.1:5000/{node_name}"
     print(url)
     response = requests.post(url, json=data)
     return response
