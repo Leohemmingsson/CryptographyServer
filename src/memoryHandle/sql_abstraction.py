@@ -5,8 +5,11 @@ import os
 import mysql.connector
 from dotenv import load_dotenv
 
+# own
+from .abstract_memory import ABCMemory
 
-class DB:
+
+class SQL(ABCMemory):
     def __init__(self) -> None:
         load_dotenv()
         self.mydb = mysql.connector.connect(
@@ -114,6 +117,11 @@ class DB:
 
         self.cursor.execute("DELETE FROM Content where id != 99999999999")
         self.mydb.commit()
+
+    # TODO:
+    # Implement function
+    def set_global_keys(self, pk, msk, gk, scheme):
+        pass
 
     def close(self):
         """

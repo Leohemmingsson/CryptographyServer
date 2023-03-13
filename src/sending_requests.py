@@ -2,8 +2,8 @@ import requests
 
 
 def send_request_to_with(node_name, data):
-    url = f"http://31.208.238.201:59931/{node_name}"
-    # url = f"http://127.0.0.1:5000/{node_name}"
+    # url = f"http://31.208.238.201:59931/{node_name}"
+    url = f"http://127.0.0.1:5000/{node_name}"
     print(url)
     response = requests.post(url, json=data)
     return response
@@ -11,7 +11,7 @@ def send_request_to_with(node_name, data):
 
 def get_post_data():
     return {
-        "user_id": "1",
+        "user_id": "999",
         "file_name": "test.txt",
         "policy": '("A" and "B")',
         "content": "A secret message",
@@ -44,6 +44,6 @@ def reset_files(data=None):
     return resp
 
 
-resp = reset_files(get_post_data())
+resp = decrypt_file(get_post_data())
 print(resp.status_code)
 print(resp.json())

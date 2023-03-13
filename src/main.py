@@ -6,11 +6,14 @@ from json import dumps
 import require
 
 # local imports
-from abe_abstraction import *
-from database_abstraction import DB
+from abe_abstraction import ABE
+from memoryHandle import get_memory_handle
+import configparser
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
+config = configparser.ConfigParser()
+config.read("config.ini")
 
 
 def __http_response(name="", description="", code=200, content=None, content_type=None):
@@ -25,16 +28,23 @@ def __http_response(name="", description="", code=200, content=None, content_typ
 # Before *each* request
 @app.before_request
 def init():
-    g.abe = ABE(CPAc17)
-    g.sql = DB()
+    try:
+        init_configs = config["INIT"]
+        g.abe = ABE(init_configs["scheme"])
+        g.sql = get_memory_handle(init_configs["save_type"])
+    except Exception as e:
+        return __http_response(description=str(e), code=400)
 
 
 # This happens after *each* request
 @app.teardown_appcontext
 def teardown(exception):
-    g.pop("abe")
-    g.sql.close()
-    g.pop("sql")
+    if "abe" in g:
+        g.pop("abe")
+
+    if "sql" in g:
+        g.sql.close()
+        g.pop("sql")
 
 
 @app.route("/encrypt_file", endpoint="encrypt_file", methods=["POST"])
@@ -67,11 +77,11 @@ def decrypt_file(
     """
     POST a JSON containing either a user_id or a list of attributes and a file name, returns 200 if ok.
     """
-    # try:
-    plaintext = __decrypt_file_func(user_id, file_name, attributes, policy)
-    res = {"code": 200, "content": plaintext, "content_type": "text/plain"}
-    # except Exception as e:
-    #     res = {"code": 400, "description": str(e)}
+    try:
+        plaintext = __decrypt_file_func(user_id, file_name, attributes, policy)
+        res = {"code": 200, "content": plaintext, "content_type": "text/plain"}
+    except Exception as e:
+        res = {"code": 400, "description": str(e)}
 
     return res
 
