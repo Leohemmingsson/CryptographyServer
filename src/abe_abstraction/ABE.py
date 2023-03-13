@@ -6,12 +6,14 @@ from .AW11 import AW11
 
 
 class ABE:
-    valid_types: list[Type] = [AW11, KPAc17, CPAc17]
+    implementedTypes: list[Type] = {"kpac17": KPAc17, "cpac17": CPAc17}
 
     # This is run before init and expects a return value
     def __new__(
         self: "ABE", scheme: Type, attributes: list[str] = None, policy: str = None
     ):
-        if scheme not in self.valid_types:
+        scheme = scheme.lower()
+        if scheme not in self.implementedTypes:
             raise Exception(ValueError("No such scheme"))
-        return scheme(attributes, policy)
+
+        return self.implementedTypes[scheme](attributes, policy)
